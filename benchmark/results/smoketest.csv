@@ -1,0 +1,6 @@
+request_id,user_id,prompt_index,prompt_words,success,error,start_time,end_time,latency_s,ttft_s,avg_itl_s,tokens_generated,tokens_per_sec
+0,0,0,8,False,TimeoutError: ,1005708.114135,1005710.115274,2.001139,,,0,0.0
+1,1,1,11,False,TimeoutError: ,1005708.114712,1005710.116808,2.002097,,,0,0.0
+2,2,2,9,False,TimeoutError: ,1005708.11501,1005710.117746,2.002735,,,0,0.0
+3,0,3,10,False,TimeoutError: ,1005710.115843,1005712.116541,2.000698,,,0,0.0
+4,1,4,8,False,TimeoutError: ,1005710.116966,1005712.117519,2.000554,,,0,0.0
