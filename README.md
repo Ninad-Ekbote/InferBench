@@ -27,7 +27,13 @@ Each `load_test.py` run appends a row (timestamp, model, users, max_tokens, tota
 
 A [roofline model](https://en.wikipedia.org/wiki/Roofline_model) answers one question for a given workload on a given GPU: **is it limited by memory bandwidth or by raw compute?** Plot performance (FLOPs/sec) against arithmetic intensity (FLOPs of work done per byte moved from memory), on log-log axes. Two ceilings bound what's achievable: a **memory roof** (a diagonal line — performance scales with how much bandwidth you have, since you're bottlenecked on data movement) and a **compute roof** (a flat line — you've saturated the GPU's math throughput, more bandwidth wouldn't help). Where they cross is the **ridge point**: workloads to its left are memory-bound, to its right are compute-bound.
 
-For LLM inference specifically, **prefill** (processing a whole prompt at once) tends to land compute-bound — many tokens share the same weight reads. **Decode** (generating one token at a time) tends to land memory-bound — each step re-reads the model's weights and KV cache to produce a single token. `plots/roofline.png` shows exactly this split, measured on this project's actual model and GPU rather than assumed. `plots/simplified_serving_roofline.png` is a different, non-standard chart kept only for comparison — see below.
+For LLM inference specifically, **prefill** (processing a whole prompt at once) tends to land compute-bound — many tokens share the same weight reads. **Decode** (generating one token at a time) tends to land memory-bound — each step re-reads the model's weights and KV cache to produce a single token. The plot below shows exactly this split, measured on this project's actual model and GPU rather than assumed:
+
+![Standard roofline: Mistral-7B-Instruct-v0.2 on RTX 5090](plots/roofline.png)
+
+`plots/simplified_serving_roofline.png` is a different, non-standard chart kept only for before/after comparison — concurrency vs. throughput, not arithmetic intensity:
+
+![Simplified serving roofline (not a standard roofline)](plots/simplified_serving_roofline.png)
 
 Three-step pipeline — run in order, from the repo root:
 
