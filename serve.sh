@@ -15,10 +15,20 @@ fi
 : "${RUNPOD_SSH_KEY:?RUNPOD_SSH_KEY not set (see .env.example)}"
 : "${MODEL_NAME:=gpt2}"
 : "${VLLM_PORT:=8000}"
+: "${SPECULATIVE:=}"
+
+# SPECULATIVE=1 enables n-gram speculative decoding (no extra draft model needed).
+SPEC_FLAG=""
+if [ -n "$SPECULATIVE" ]; then
+  SPEC_FLAG="--speculative-config '{\"method\": \"ngram\", \"num_speculative_tokens\": 5, \"prompt_lookup_max\": 4}'"
+fi
 
 # VLLM_USE_FLASHINFER_SAMPLER=0: on Blackwell GPUs (SM 12.x, e.g. RTX 50 series)
 # FlashInfer's sampling kernel doesn't recognize the architecture and throws
 # "FlashInfer requires GPUs with sm75 or higher" even though CUDA is new enough.
 # This skips FlashInfer's sampler and falls back to vLLM's native PyTorch one.
+# HF_HUB_ENABLE_HF_TRANSFER=1: default single-connection HF Hub downloads can
+# be extremely slow (sub-1MB/s observed) regardless of auth status; hf_transfer
+# uses parallel connections instead.
 ssh -o StrictHostKeyChecking=accept-new -i "$RUNPOD_SSH_KEY" -p "$RUNPOD_PORT" -L "$VLLM_PORT:localhost:$VLLM_PORT" "root@$RUNPOD_HOST" \
-  "pip install -q --break-system-packages vllm && VLLM_USE_FLASHINFER_SAMPLER=0 vllm serve $MODEL_NAME --port $VLLM_PORT"
+  "pip install -q --break-system-packages vllm hf_transfer && HF_HUB_ENABLE_HF_TRANSFER=1 VLLM_USE_FLASHINFER_SAMPLER=0 vllm serve $MODEL_NAME --port $VLLM_PORT $SPEC_FLAG"
