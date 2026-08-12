@@ -1,6 +1,6 @@
 # InferBench
 
-Run a persistent vLLM server on a RunPod GPU pod, send it requests from your machine, and benchmark it under concurrent load.
+A toolkit for standing up a low-latency LLM inference server and proving it's actually fast: run a persistent vLLM server on a RunPod GPU pod, hammer it with concurrent requests from your own machine, and measure real latency, throughput, and GPU roofline limits — the same kind of benchmarking you'd want before building a production-grade, low-latency API on top of it.
 
 ## Setup
 
