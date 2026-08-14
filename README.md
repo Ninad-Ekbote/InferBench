@@ -4,6 +4,8 @@ A toolkit for standing up a low-latency LLM inference server and proving it's ac
 
 ## Setup
 
+This project defaults to and has been benchmarked with **`mistralai/Mistral-7B-Instruct-v0.2`** (change it via `MODEL_NAME` in `.env` or `--model` on `load_test.py`).
+
 1. Deploy a GPU pod on RunPod with SSH enabled (1 GPU, 24GB+ VRAM recommended for a 7B model).
 2. Copy `.env.example` to `.env` and fill in your pod's SSH host, port, key path, and the model you want to serve.
 3. `./serve.sh` — installs vLLM on the pod, starts it, and tunnels its port to `localhost`. Leave this running.
